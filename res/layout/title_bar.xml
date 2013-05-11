@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title_wrapper"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:layout_gravity="left" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/myTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:gravity="center"
+        android:text="@string/EverTemplate"
+        android:textSize="30sp" />
+
+    <ImageButton
+        android:id="@+id/ibLogout"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:adjustViewBounds="true"
+        android:onClick="logout"
+        
+        android:contentDescription="@string/label_logout"
+        android:src="@drawable/icon" />
+
+</LinearLayout>
