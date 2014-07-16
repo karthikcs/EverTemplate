@@ -40,20 +40,25 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
 import com.evernote.client.conn.mobile.FileData;
+import com.karthiksunil.evertemplate.R;
+
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Resource;
 import com.evernote.edam.type.ResourceAttributes;
-import com.karthiksunil.evertemplate.R;
+
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -89,7 +94,8 @@ public class ImagePicker extends ParentActivity {
   private Button mBtnSelect;
 
 
-  public void onCreate(Bundle savedInstanceState) {
+  @Override
+public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.image_picker);
 
@@ -261,10 +267,10 @@ public class ImagePicker extends ParentActivity {
 
       Uri selectedImage = intents[0].getData();
       String[] queryColumns = {
-          MediaStore.Images.Media._ID,
-          MediaStore.Images.Media.DATA,
-          MediaStore.Images.Media.MIME_TYPE,
-          MediaStore.Images.Media.DISPLAY_NAME};
+          BaseColumns._ID,
+          MediaColumns.DATA,
+          MediaColumns.MIME_TYPE,
+          MediaColumns.DISPLAY_NAME};
 
       Cursor cursor = null;
       ImageData image = null;

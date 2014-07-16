@@ -23,6 +23,9 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         
         String createQuery2 = "CREATE TABLE EverTempPrefs (userid integer, pref_name, pref_value, primary key (userid,pref_name));";                 
         db.execSQL(createQuery2);
+        
+        String createQuery3 = "CREATE TABLE EverSharedNotes (userid integer, note_guid, notebook_guid, note_title, note_content, primary key (userid, note_guid));" ;
+        db.execSQL(createQuery3);
 	}
 
 	@Override

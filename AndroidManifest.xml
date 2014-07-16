@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.karthiksunil.evertemplate"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="1.2" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-sdk
         android:minSdkVersion="5"
@@ -12,7 +13,7 @@
 
     <application
         android:icon="@drawable/icon"
-        android:label="@string/app_name" >
+        android:label="@string/app_name">
 
         <!-- <application android:icon="@drawable/icon" android:label="@string/app_name" > -->
         <activity
@@ -42,6 +43,9 @@
         <activity
             android:name=".Options"
             android:label="@string/simple_note" />
+        <activity
+            android:name=".SharedTemplates"
+            android:label="@string/sharedtemplate" />
         <activity
             android:name=".ParentActivity"
             android:configChanges="orientation|keyboardHidden" />

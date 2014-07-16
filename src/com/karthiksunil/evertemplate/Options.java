@@ -44,21 +44,31 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.client.android.OnClientCallback;
+import com.evernote.edam.error.EDAMNotFoundException;
+import com.evernote.edam.error.EDAMSystemException;
+import com.evernote.edam.error.EDAMUserException;
+import com.evernote.edam.notestore.NoteCollectionCounts;
 import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.notestore.NoteList;
+import com.evernote.edam.notestore.SyncChunk;
+import com.evernote.edam.type.LinkedNotebook;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Notebook;
+import com.evernote.edam.type.User;
+import com.evernote.edam.userstore.PublicUserInfo;
+import com.evernote.edam.userstore.UserStore;
+import com.evernote.thrift.TException;
 import com.evernote.thrift.transport.TTransportException;
 import com.karthiksunil.evertemplate.R;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
- * This sample shows how to list Evernote notebooks and create a note in the
- * specific notebook.
- * <p/>
+ * * <p/>
  * class created by @tylersmithnet
  */
 public class Options extends ParentActivity {
@@ -81,8 +91,9 @@ public class Options extends ParentActivity {
 	private String mSelectedNotebookGuid;
 	private String mSelectedNotebookName;
 	boolean notesFetching = false;
-	Dialog progress;
+	ProgressDialog progress;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.options);
@@ -250,6 +261,7 @@ public class Options extends ParentActivity {
 		}
 	}
 
+	@Override
 	public void onResume() {
 		super.onResume();
 		/*
@@ -319,7 +331,7 @@ public class Options extends ParentActivity {
 	}
 
 	// Called when Refresh Button is clicked
-	public void refreshNotes(View view) {
+	public  void refreshNotes(View view) {
 	
 		DatabaseConnector dbConnector = new DatabaseConnector(Options.this);
 		dbConnector.open();
@@ -334,157 +346,106 @@ public class Options extends ParentActivity {
 		dbConnector.close();
 		
 	}
+
 	/**
 	 * Select notebook, create AlertDialog to pick notebook guid
 	 */
 	int mSelectedPos = -1;
 
 	public void selectNotebook(View view) {
-
-		try {
-			progress = ProgressDialog.show(Options.this, "Loading data",
-					"Please wait...");
-			mEvernoteSession.getClientFactory().createNoteStoreClient()
-					.listNotebooks(new OnClientCallback<List<Notebook>>() {
-
-						@Override
-						public void onSuccess(final List<Notebook> notebooks) {
-							CharSequence[] names = new CharSequence[notebooks
-									.size()];
-							int selected = -1;
-							Notebook notebook = null;
-							progress.dismiss();
-							for (int index = 0; index < notebooks.size(); index++) {
-								notebook = notebooks.get(index);
-								names[index] = notebook.getName();
-								if (notebook.getGuid().equals(
-										mSelectedNotebookGuid)) {
-									selected = index;
-								}
-							}
-
-							AlertDialog.Builder builder = new AlertDialog.Builder(
-									Options.this);
-
-							builder.setSingleChoiceItems(names, selected,
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											mSelectedPos = which;
-										}
-									})
-									.setPositiveButton(
-											R.string.ok,
-											new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(
-														DialogInterface dialog,
-														int which) {
-													if (mSelectedPos > -1) {
-														mSelectedNotebookGuid = notebooks
-																.get(mSelectedPos)
-																.getGuid();
-														mSelectedNotebookName = notebooks
-																.get(mSelectedPos)
-																.getName();
-														DatabaseConnector dbConnector = new DatabaseConnector(
-																Options.this);
-
-														dbConnector.open();
-														Cursor result = dbConnector
-																.getOneTemplate(EverTemplate.everUserId);
-														int count = result
-																.getCount();
-
-														if (count == 0) {
-															dbConnector
-																	.insertTemplate(
-																			EverTemplate.everUserId,
-																			mSelectedNotebookGuid,
-																			mSelectedNotebookName);
-														} else {
-															dbConnector
-																	.updateTemplate(
-																			EverTemplate.everUserId,
-																			mSelectedNotebookGuid,
-																			mSelectedNotebookName);
-														}
-														dbConnector.close();
-														tvSel.setText(mSelectedNotebookName);
-
-														getNotes(mSelectedNotebookGuid);
-
-													}
-													dialog.dismiss();
-												}
-
-											}).create().show();
-						}
-
-						@Override
-						public void onException(Exception exception) {
-							Log.e(LOGTAG, "Error listing notebooks", exception);
-							Toast.makeText(getApplicationContext(),
-									R.string.error_listing_notebooks,
-									Toast.LENGTH_LONG).show();
-							removeDialog(DIALOG_PROGRESS);
-							progress.dismiss();
-						}
-					});
-
-			// Trying to retrieve notes from this notebook
-			NoteFilter filter = new NoteFilter();
-			filter.setNotebookGuid(mSelectedNotebookGuid);
-			String authToken = mEvernoteSession.getAuthToken();
-
-			mEvernoteSession
-					.getClientFactory()
-					.createNoteStoreClient()
-					.findNotes(filter, 0, 100,
-							new OnClientCallback<NoteList>() {
-								@Override
-								public void onSuccess(final NoteList noteList) {
-									List<Note> notes = noteList.getNotes();
-
-									String noteName;
-									// CharSequence[] names = new
-									// CharSequence[notebooks.size()];
-									// int selected = -1;
-									Note note = null;
-									for (int index = 0; index < notes.size(); index++) {
-										note = notes.get(index);
-										noteName = note.getTitle();
-									}
-
-								}
-
-								@Override
-								public void onException(Exception exception) {
-									Log.e(LOGTAG, "Error listing notebooks",
-											exception);
-									Toast.makeText(getApplicationContext(),
-											R.string.error_listing_notebooks,
-											Toast.LENGTH_LONG).show();
-									removeDialog(DIALOG_PROGRESS);
-									progress.dismiss();
-								}
-
-							});
-
-		} catch (TTransportException exception) {
-			Log.e(LOGTAG, "Error creating notestore", exception);
-			Toast.makeText(getApplicationContext(),
-					R.string.error_creating_notestore, Toast.LENGTH_LONG)
-					.show();
-			removeDialog(DIALOG_PROGRESS);
-			progress.dismiss();
+		
+		if (!isNetworkAvailable() ){
+			Toast.makeText(getApplicationContext(), 
+					R.string.check_internet, Toast.LENGTH_LONG).show();
+			return;
 		}
-		// progress.dismiss();
+		
+		try {
+	    	progress = ProgressDialog.show(Options.this, getString(R.string.fetching_notebooks),
+	    			getString(R.string.please_wait));
+	    	mSelectedPos = -1;
+	        mEvernoteSession.getClientFactory().createNoteStoreClient().listNotebooks(new OnClientCallback<List<Notebook>>() {
+	          
 
+	          @Override
+	          public void onSuccess(final List<Notebook> notebooks) {
+	            CharSequence[] names = new CharSequence[notebooks.size()];
+	            int selected = -1;
+	            Notebook notebook = null;
+	            progress.dismiss();
+	            
+	            for (int index = 0; index < notebooks.size(); index++) {
+	              notebook = notebooks.get(index);
+	              names[index] = notebook.getName();
+	              if (notebook.getGuid().equals(mSelectedNotebookGuid)) {
+	                selected = index;
+	              }
+	            }
+
+	            AlertDialog.Builder builder = new AlertDialog.Builder(Options.this);
+
+	            builder
+	                .setSingleChoiceItems(names, selected, new DialogInterface.OnClickListener() {
+	                  @Override
+	                  public void onClick(DialogInterface dialog, int which) {
+	                    mSelectedPos = which;
+	                  }
+	                })
+	                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+	                  @Override
+	                  public void onClick(DialogInterface dialog, int which) {
+	                	  //mSelectedPos = which;
+	                    if (mSelectedPos > -1) {
+	                      mSelectedNotebookGuid = notebooks.get(mSelectedPos).getGuid();
+	                      mSelectedNotebookName = notebooks.get(mSelectedPos).getName();
+	                      DatabaseConnector dbConnector = new DatabaseConnector(Options.this);
+	                      dbConnector.open();
+	                      Cursor result = dbConnector.getOneTemplate(EverTemplate.everUserId);
+	                      int count = result.getCount();
+	                      if (count == 0) {
+								dbConnector.insertTemplate(
+												EverTemplate.everUserId,
+												mSelectedNotebookGuid,
+												mSelectedNotebookName);
+							} else {
+								dbConnector.updateTemplate(
+												EverTemplate.everUserId,
+												mSelectedNotebookGuid,
+												mSelectedNotebookName);
+							}
+	                      dbConnector.close();
+	                      tvSel.setText(mSelectedNotebookName);
+	                      dialog.dismiss();
+	                      getNotes(mSelectedNotebookGuid);
+	                      
+
+	                    }
+	                    //while (notesFetching);
+	                   
+	                  }
+	                })
+	                .create()
+	                .show();
+	            
+	          }
+
+	          @Override
+	          public void onException(Exception exception) {
+	            Log.e(LOGTAG, "Error listing notebooks", exception);
+	            Toast.makeText(getApplicationContext(), R.string.error_listing_notebooks, Toast.LENGTH_LONG).show();
+	            removeDialog(DIALOG_PROGRESS);
+	            progress.dismiss();
+	          }
+	        });
+	      } catch (TTransportException exception) {
+	        Log.e(LOGTAG, "Error creating notestore", exception);
+	        Toast.makeText(getApplicationContext(), R.string.error_creating_notestore, Toast.LENGTH_LONG).show();
+	        removeDialog(DIALOG_PROGRESS);
+	      }
+	    
 	}
-
+	
+	
 	String noteContent;
 
 	String gNotebookGuid;
@@ -495,18 +456,19 @@ public class Options extends ParentActivity {
 	int dataIndex = 0;
 
 	DatabaseConnector dbConnector = new DatabaseConnector(Options.this);
-
+	
+	
 	public void getNotes(String NotebookGuid) {
 		// TODO Auto-generated method stub
-		Cursor result;
+		//Cursor result;
 		gNotebookGuid = NotebookGuid;
 		// result.
 		NoteFilter filter = new NoteFilter();
 
 		// Trying to shwo progress indicator
 
-		progress = ProgressDialog.show(Options.this, "Loading data",
-				"Please wait...");
+		progress = ProgressDialog.show(Options.this, getString(R.string.fetching_notes),
+				getString(R.string.please_wait));
 		notesFetching = true;
 		filter.setNotebookGuid(NotebookGuid);
 		try {
@@ -520,19 +482,13 @@ public class Options extends ParentActivity {
 
 									dbConnector.open();
 									notes = noteList.getNotes();
-
-									String noteName;
-									// CharSequence[] names = new
-									// CharSequence[notebooks.size()];
-									// int selected = -1;
+									//progress.dismiss();
 
 									dbConnector.deleteNotes(everUserId);
 
 									for (int index = 0; index < notes.size(); index++) {
 
 										note = notes.get(index);
-										noteName = note.getTitle();
-										int len = note.getContentLength();
 										try {
 											mEvernoteSession
 													.getClientFactory()
@@ -548,6 +504,8 @@ public class Options extends ParentActivity {
 																	// Auto-generated
 																	// method
 																	// stub /// Karthik need to work on the issue
+																	progress.setMessage(getString(R.string.fetching) + " "+ dataIndex 
+																			+ " " + getString(R.string.of) + " " + notes.size() );
 																	noteData = notes
 																			.get(dataIndex);
 																	noteContent = data;
@@ -564,7 +522,7 @@ public class Options extends ParentActivity {
 																		progress.dismiss();
 																		Toast.makeText(
 																				getApplicationContext(),
-																				"Notes refreshed",
+																				getString(R.string.notes_refreshed),
 																				Toast.LENGTH_LONG)
 																				.show();
 																		notesFetching = false;
@@ -579,7 +537,7 @@ public class Options extends ParentActivity {
 																	// Auto-generated
 																	// method
 																	// stub
-
+																	progress.dismiss();
 																}
 
 															});
@@ -625,7 +583,8 @@ public class Options extends ParentActivity {
 
 								@Override
 								public void onException(Exception exception) {
-									Log.e(LOGTAG, "Error listing notebooks",
+									progress.dismiss();
+									Log.e(LOGTAG, "Error fetching notes",
 											exception);
 									Toast.makeText(getApplicationContext(),
 											R.string.error_listing_notebooks,

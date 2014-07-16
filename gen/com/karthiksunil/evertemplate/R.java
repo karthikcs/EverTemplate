@@ -16,25 +16,37 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int ic_action_back=0x7f020000;
+        public static final int ic_action_collection=0x7f020001;
+        public static final int ic_action_refresh=0x7f020002;
+        public static final int ic_action_remove=0x7f020003;
+        public static final int ic_action_settings=0x7f020004;
+        public static final int icon=0x7f020005;
     }
     public static final class id {
+        public static final int back=0x7f070017;
+        public static final int copy=0x7f070011;
         public static final int date_format=0x7f070008;
-        public static final int esdk__switch_service=0x7f07000e;
+        public static final int delete=0x7f070010;
+        public static final int edit=0x7f07000f;
+        public static final int esdk__switch_service=0x7f070012;
         public static final int esdk__webview=0x7f070000;
-        public static final int ibLogout=0x7f07000d;
+        public static final int ibLogout=0x7f07000e;
         public static final int image=0x7f070001;
-        public static final int imageView1=0x7f07000b;
+        public static final int imageView1=0x7f07000c;
         public static final int image_button_wrapper=0x7f070002;
         public static final int list=0x7f070005;
-        public static final int logoff=0x7f070010;
-        public static final int myTitle=0x7f07000c;
-        public static final int options=0x7f07000f;
+        public static final int logoff=0x7f070016;
+        public static final int myTitle=0x7f07000d;
+        public static final int options=0x7f070015;
+        public static final int refresh=0x7f070013;
         public static final int refresh_button=0x7f070007;
         public static final int save_button=0x7f070004;
         public static final int select_button=0x7f070003;
+        public static final int sharedtemplate=0x7f070014;
+        public static final int sharedtemplatelist=0x7f07000a;
         public static final int time_format=0x7f070009;
-        public static final int title_wrapper=0x7f07000a;
+        public static final int title_wrapper=0x7f07000b;
         public static final int tvSelected=0x7f070006;
     }
     public static final class layout {
@@ -42,24 +54,33 @@ public final class R {
         public static final int image_picker=0x7f030001;
         public static final int main=0x7f030002;
         public static final int options=0x7f030003;
-        public static final int title_bar=0x7f030004;
+        public static final int sharedtemplates=0x7f030004;
+        public static final int title_bar=0x7f030005;
     }
     public static final class menu {
-        public static final int esdk__oauth=0x7f060000;
-        public static final int menu=0x7f060001;
+        public static final int ctxmenulocal=0x7f060000;
+        public static final int ctxmenushared=0x7f060001;
+        public static final int esdk__oauth=0x7f060002;
+        public static final int menu=0x7f060003;
+        public static final int menu_1=0x7f060004;
     }
     public static final class string {
-        public static final int EverTemplate=0x7f040022;
+        public static final int Copy=0x7f040035;
+        public static final int Delete=0x7f040034;
+        public static final int Edit=0x7f040033;
+        public static final int EverTemplate=0x7f040025;
         public static final int app_name=0x7f040007;
-        public static final int content=0x7f040019;
-        public static final int date_format_lbl=0x7f040027;
-        public static final int empty_content_error=0x7f04001a;
+        public static final int back=0x7f040032;
+        public static final int check_internet=0x7f040022;
+        public static final int content=0x7f04001b;
+        public static final int date_format_lbl=0x7f04002f;
+        public static final int empty_content_error=0x7f04001c;
         public static final int err_creating_note=0x7f040008;
         public static final int err_image_selected=0x7f04000e;
         public static final int err_retrieving_resource=0x7f04000f;
-        public static final int error_creating_notestore=0x7f040020;
-        public static final int error_listing_notebooks=0x7f04001f;
-        public static final int error_saving_note=0x7f040021;
+        public static final int error_creating_notestore=0x7f040023;
+        public static final int error_listing_notebooks=0x7f040021;
+        public static final int error_saving_note=0x7f040024;
         public static final int esdk__err_api_setup=0x7f040005;
         public static final int esdk__err_authentication=0x7f040004;
         public static final int esdk__err_protocol_version=0x7f040003;
@@ -70,25 +91,33 @@ public final class R {
         public static final int esdk__loading=0x7f040006;
         public static final int esdk__pick_notebook=0x7f040011;
         public static final int esdk__simple_note=0x7f040015;
-        public static final int image_picker=0x7f04001e;
+        public static final int fetching=0x7f04002b;
+        public static final int fetching_notebooks=0x7f040029;
+        public static final int fetching_notes=0x7f04002a;
+        public static final int image_picker=0x7f040020;
         public static final int label_app_title=0x7f04000a;
         public static final int label_login=0x7f040012;
         public static final int label_logout=0x7f040013;
         public static final int label_message=0x7f04000c;
+        public static final int label_predefined=0x7f040019;
         public static final int label_refresh=0x7f040017;
         public static final int label_save_button=0x7f04000d;
         public static final int label_select_button=0x7f04000b;
         public static final int label_select_notebook_button=0x7f040016;
-        public static final int logoff=0x7f040024;
+        public static final int logoff=0x7f040027;
         public static final int msg_image_saved=0x7f040009;
         public static final int msg_retrieved_resource=0x7f040010;
-        public static final int note_saved=0x7f04001b;
-        public static final int ok=0x7f04001c;
-        public static final int options=0x7f040023;
-        public static final int refresh=0x7f040025;
-        public static final int selected_notebook=0x7f040026;
-        public static final int simple_note=0x7f04001d;
-        public static final int time_format_lbl=0x7f040028;
-        public static final int title=0x7f040018;
+        public static final int note_saved=0x7f04001d;
+        public static final int notes_refreshed=0x7f040028;
+        public static final int of=0x7f04002c;
+        public static final int ok=0x7f04001e;
+        public static final int options=0x7f040026;
+        public static final int please_wait=0x7f04002d;
+        public static final int refresh=0x7f040018;
+        public static final int selected_notebook=0x7f04002e;
+        public static final int sharedtemplate=0x7f040031;
+        public static final int simple_note=0x7f04001f;
+        public static final int time_format_lbl=0x7f040030;
+        public static final int title=0x7f04001a;
     }
 }

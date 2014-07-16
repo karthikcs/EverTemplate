@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
+  
+  <item android:id="@+id/back"
+          android:title="@string/back"
+          android:showAsAction="ifRoom" 
+          android:icon="@drawable/ic_action_back"
+          />
   <item android:id="@+id/refresh"
           android:title="@string/refresh"
           android:showAsAction="ifRoom" 
           android:icon="@drawable/ic_action_refresh"
           />    
-  <item android:id="@+id/sharedtemplate"
-          android:title="@string/sharedtemplate"
-          android:showAsAction="ifRoom" 
-          android:icon="@drawable/ic_action_collection"
-          />  
   <item android:id="@+id/options"
           android:title="@string/options"
           android:icon="@drawable/ic_action_settings"
           android:showAsAction="ifRoom" 
           />
-  <item android:id="@+id/logoff"
-          android:title="@string/logoff"
-          android:showAsAction="ifRoom" 
-          android:icon="@drawable/ic_action_remove"
-          />
-  
+
 
 </menu>

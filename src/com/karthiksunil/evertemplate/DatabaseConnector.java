@@ -60,6 +60,7 @@ public class DatabaseConnector {
 				null);
 	}
 
+	
 	public void deleteTemplate(int  userid) {
 		open();
 		database.delete("EverUserTemplates", "userid=" + userid, null);
@@ -96,6 +97,12 @@ public class DatabaseConnector {
 		close();
 	}
 	
+	public void deleteSingleNote(int  userid, String noteGuid) {
+		open();
+		database.delete("EverUserNotes", "userid=? and note_guid=?", new String[] { Integer.toString(userid), noteGuid} );
+		close();
+	}
+	
 	// SQLs for Preferences 
 	public void insertPrefs(int userid, String pref_name, String pref_value){
 		ContentValues newCon = new ContentValues();
@@ -123,6 +130,37 @@ public class DatabaseConnector {
 	
 	public Cursor getPref(int userid, String pref_name){
 		return database.query("EverTempPrefs", null, "pref_name=?", new String[] {pref_name } , null, null,
+				null);
+	}
+	
+	// Methods needed for maintaining Shared notes
+	public void deleteSharedNotes(int userid) {
+		open();
+		database.delete("EverSharedNotes", "userid=" + userid, null);
+		close();
+	}
+	
+	public void insertSharedNote(int userid, String note_guid, String template_guid, String note_title, String note_content) {
+		ContentValues newCon = new ContentValues();
+		newCon.put("userid", userid);
+		newCon.put("note_guid", note_guid);
+		newCon.put("notebook_guid", template_guid);
+		newCon.put("note_title", note_title);
+		newCon.put("note_content", note_content);
+		
+
+		open();
+		database.insert("EverSharedNotes", null, newCon);
+		close();
+	}
+	
+	public Cursor getSharedNotes(int userid) {
+		return database.query("EverSharedNotes", null, "userid=" + userid, null, null, null,
+				null);
+	}
+	
+	public Cursor getSharedNoteContent(int everUserId, String noteGuid) {
+		return database.query("EverSharedNotes", null, "note_guid=?", new String[] {noteGuid } , null, null,
 				null);
 	}
 	

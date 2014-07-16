@@ -16,25 +16,38 @@
     <string name="label_logout">Sign out</string>
     <string name="esdk__image_picker">Image Picker</string>
     <string name="esdk__simple_note">Simple Note</string>
-    <string name="label_select_notebook_button">Select Default Notebook for templates</string>
+    <string name="label_select_notebook_button">Template Notebook</string>
     <string name="label_refresh">Refresh Templates</string>
+    <string name="refresh">Refresh</string>
+    <string name="label_predefined">Predefined Templates</string>
     <string name="title">Note Title</string>
     <string name="content">Note Content</string>
     <string name="empty_content_error">Note title and content cannot be empty</string>
     <string name="note_saved">Note saved to Evernote</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="simple_note">EverTemplate Options</string>
     <string name="image_picker">Image Picker</string>
     <string name="error_listing_notebooks">Error listing notebooks</string>
+    <string name="check_internet">Please check your internet connection </string>
     <string name="error_creating_notestore">Error creating notestore</string>
     <string name="error_saving_note">Error saving note</string>
     <string name="EverTemplate">EverTemplate</string>
     <string name="options">Options</string>
     <string name="logoff">Logoff</string>
-    <string name="refresh">Refresh</string>
+    <string name="notes_refreshed">Notes refreshed</string>
+    <string name="fetching_notebooks">Fetching notebook</string>
+    <string name="fetching_notes">Fetching notes</string>
+    <string name="fetching">Fetching </string>
+    <string name="of"> of </string>
+    <string name="please_wait">Please wait ...</string>
     <string name="selected_notebook">Selected Notebook</string> 
     <string name="date_format_lbl">Date Format</string>
     <string name="time_format_lbl">Time Format</string>
+    <string name="sharedtemplate">Shared Template</string>
+    <string name="back">Back</string>
+    <string name="Edit">Edit</string>
+    <string name="Delete">Delete</string>
+    <string name="Copy">Copy</string>
     <string-array name="date_format">
         <item>03/17/2013</item>
         <item>Wednesday, March 17, 2013</item>
@@ -42,12 +55,13 @@
         <item>17-Mar</item>
         <item>17-Mar-2013</item>
         <item>17-03-2013</item>
+    
         
     </string-array>
-        <string-array name="time_format">
+    <string-array name="time_format">
         <item>12 hrs</item>
         <item>24 hrs</item>
-        
     </string-array>
+
 
 </resources>

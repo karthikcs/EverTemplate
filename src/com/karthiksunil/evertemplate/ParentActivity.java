@@ -28,9 +28,14 @@ package com.karthiksunil.evertemplate;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+
 import com.evernote.client.android.EvernoteSession;
 import com.karthiksunil.evertemplate.R;
+
 
 /**
  * This is the parent activity that all sample activites extend from. This creates the Evernote Session in onCreate
@@ -72,11 +77,12 @@ public class ParentActivity extends Activity {
   protected EvernoteSession mEvernoteSession;
   protected final int DIALOG_PROGRESS = 101;
 
-  public void onCreate(Bundle savedInstanceState) {
+  @Override
+public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     //Set up the Evernote Singleton Session
-    mEvernoteSession = EvernoteSession.getInstance(this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE);
+    mEvernoteSession = EvernoteSession.getInstance(this, CONSUMER_KEY, CONSUMER_SECRET, EVERNOTE_SERVICE, true);
   }
 
   // using createDialog, could use Fragments instead
@@ -100,4 +106,11 @@ public class ParentActivity extends Activity {
         ((ProgressDialog) dialog).setMessage(getString(R.string.esdk__loading));
     }
   }
+  
+  public boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
 }

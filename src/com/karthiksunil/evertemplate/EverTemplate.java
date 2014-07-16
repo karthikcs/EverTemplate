@@ -25,52 +25,38 @@
  */
 package com.karthiksunil.evertemplate;
 
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlPullParser;
-
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
-import android.util.Xml;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
-import com.evernote.edam.notestore.NoteFilter;
-import com.evernote.edam.notestore.NoteList;
-import com.evernote.edam.type.Note;
-import com.evernote.edam.type.User;
 import com.evernote.thrift.transport.TTransportException;
 import com.karthiksunil.evertemplate.R;
 
@@ -84,6 +70,8 @@ import com.karthiksunil.evertemplate.R;
  */
 
 public class EverTemplate extends ParentActivity {
+	
+	
 
 	// Name of this application, for logging
 	private static final String LOGTAG = "EverTemplate";
@@ -102,6 +90,8 @@ public class EverTemplate extends ParentActivity {
 
 	String noteContent;
 	List<String> tagNames;
+
+
 
 	// Listener to act on clicks
 	private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -309,6 +299,7 @@ public class EverTemplate extends ParentActivity {
 	/**
 	 * Called when the activity is first created.
 	 */
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -318,6 +309,8 @@ public class EverTemplate extends ParentActivity {
 		 */
 
 		setContentView(R.layout.main);
+
+
 
 		// mLoginButton = (Button) findViewById(R.id.login);
 		// mLogoutButton = (Button) findViewById(R.id.ibLogout);
@@ -340,6 +333,9 @@ public class EverTemplate extends ParentActivity {
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(mItemClickListener);
 		
+		mListView.setLongClickable(true);
+		registerForContextMenu(mListView);
+		
 		
 
 		if (!mEvernoteSession.isLoggedIn()) {
@@ -359,6 +355,74 @@ public class EverTemplate extends ParentActivity {
 		}
 
 	}
+	
+	//Show context menu
+	public void onCreateContextMenu(ContextMenu menu, View v,
+            ContextMenuInfo menuInfo) {
+				super.onCreateContextMenu(menu, v, menuInfo);
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.ctxmenulocal, menu);
+	}
+	
+	DatabaseConnector dbConnector = new DatabaseConnector(EverTemplate.this);
+	// ON Context Menu item selected
+	public boolean onContextItemSelected(MenuItem item) {
+		  final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		  switch (item.getItemId()) {
+		  case R.id.edit :
+			  String msg = temp_titles.get(info.position) + " Edit";
+			  
+			  Toast.makeText(EverTemplate.this, msg, 
+					  Toast.LENGTH_LONG).show();
+			  
+			  //
+			  Intent intent = new Intent();
+			  intent.setAction("com.evernote.action.VIEW_NOTE");
+			  intent.putExtra("NOTE_GUID", temp_guid.get(info.position));
+
+			  try {
+			      startActivity(intent);
+			  } catch (android.content.ActivityNotFoundException ex) {
+			      Toast.makeText(EverTemplate.this, R.string.err_creating_note, Toast.LENGTH_SHORT).show();
+			  } 
+			  return true;
+			  
+		  case R.id.delete :
+			  try {
+				mEvernoteSession.getClientFactory().createNoteStoreClient().
+				  	deleteNote(temp_guid.get(info.position), new OnClientCallback<Integer>() {
+						
+						@Override
+						public void onSuccess(Integer data) {
+							// TODO Auto-generated method stub
+							dbConnector.open();
+							dbConnector.deleteSingleNote(everUserId, temp_guid.get(info.position));
+							temp_guid.remove(info.position);
+							temp_titles.remove(info.position);
+							
+							Toast.makeText(EverTemplate.this, "Template Deleted", 
+									  Toast.LENGTH_LONG).show();
+							startActivity(new Intent(getApplicationContext(), EverTemplate.class));
+						}
+						
+						@Override
+						public void onException(Exception exception) {
+							// TODO Auto-generated method stub
+							
+						}
+					});
+			} catch (TTransportException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			  
+			  
+		  }
+		  
+		  return true;
+
+	}
+
 
 	/**
 	 * Update the UI based on Evernote authentication state.
@@ -533,6 +597,7 @@ public class EverTemplate extends ParentActivity {
 		}
 	}
 
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
@@ -540,11 +605,20 @@ public class EverTemplate extends ParentActivity {
 		return true;
 	}
 
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		
+		case R.id.sharedtemplate :
+			startActivity(new Intent(getApplicationContext(), SharedTemplates.class));
+			return true;
+		
+		case R.id.refresh :
+			// Yet to implement
+			
+			return true;
+			
 		case R.id.options:
-
 			startActivity(new Intent(getApplicationContext(), Options.class));
 			return true;
 		case R.id.logoff:
@@ -552,7 +626,7 @@ public class EverTemplate extends ParentActivity {
 				DatabaseConnector dbConnector = new DatabaseConnector(
 						EverTemplate.this);
 				dbConnector.open();
-				dbConnector.deleteTemplate(everUserId);
+				dbConnector.deleteNotes(everUserId);
 				dbConnector.close();
 				mEvernoteSession.logOut(this);
 			} catch (InvalidAuthenticationException e) {
@@ -564,4 +638,5 @@ public class EverTemplate extends ParentActivity {
 		}
 		return false;
 	}
+
 }
